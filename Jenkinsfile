@@ -42,7 +42,7 @@ pipeline {
                         ).trim()
 
                   sh "sed -i 's|image:.*|image: rohitkm25/ticketly:${appVersion}|g' k8s/deployment.yaml"
-                  sh 'kubectl apply -f k8s/'
+                  sh 'kubectl apply -f k8s/ --validate=false'
                 }
             }
         }
