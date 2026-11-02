@@ -35,7 +35,15 @@ pipeline {
         
         stage('Deploy to AKS') {
             steps {
-                sh 'kubectl apply -f k8s/'
+                script {
+                  def appVersion = sh(
+                            script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", 
+                            returnStdout: true
+                        ).trim()
+
+                  sh "sed -i 's|image:.*|image: rohitkm25/ticketly:${appVersion}|g' k8s/deployment.yaml"
+                  sh 'kubectl apply -f k8s/'
+                }
             }
         }
     }
