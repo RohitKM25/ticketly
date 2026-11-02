@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticketly - Success</title>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+</head>
+<body class="bg-[#fdf6e3] text-[#657b83] font-mono p-10">
+    <div class="max-w-md mx-auto bg-[#eee8d5] border border-[#93a1a1] p-8">
+        <h1 class="text-xl font-bold text-[#859900] mb-4">[ BOOKING SUCCESS ]</h1>
+        <p class="mb-2"><strong>Booking ID:</strong> <span th:text="${ticket.id}">1</span></p>
+        <p class="mb-2"><strong>Movie:</strong> <span th:text="${ticket.show.movieTitle}">Movie</span></p>
+        <p class="mb-2"><strong>Seat:</strong> <span th:text="${ticket.seatNumber}">A1</span></p>
+        <p class="mb-6"><strong>User:</strong> <span th:text="${ticket.userId}">user@example.com</span></p>
+        <a href="/shows" class="inline-block bg-[#268bd2] text-[#fdf6e3] px-4 py-2 border border-[#073642] hover:bg-[#206b9d] font-bold">Book Another Ticket</a>
+    </div>
+</body>
+</html>

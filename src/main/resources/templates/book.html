@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticketly - Book Seat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-mono p-10">
+    <div class="max-w-md mx-auto">
+        <h1 class="text-xl font-bold mb-4">[ BOOK SEAT: <span th:text="${show.movieTitle}">Movie</span> ]</h1>
+        
+        <div th:if="${error}" class="bg-red-100 border border-red-400 px-4 py-3 mb-4 font-bold" th:text="${error}">Error message</div>
+
+        <form action="#" th:action="@{/tickets/book}" method="post" class="border p-6">
+            <input type="hidden" name="showId" th:value="${show.id}" />
+            
+            <div class="mb-4">
+                <label for="userId" class="block mb-2 font-bold">User ID / Email:</label>
+                <input type="text" id="userId" name="userId" required class="w-full p-2 border font-mono focus:outline-none" />
+            </div>
+            
+            <div class="mb-6">
+                <label for="seatNumber" class="block mb-2 font-bold">Seat Number (e.g. A1):</label>
+                <input type="text" id="seatNumber" name="seatNumber" required class="w-full p-2 border font-mono focus:outline-none" />
+            </div>
+            
+            <button type="submit" class="w-full border py-2 font-bold cursor-pointer">Confirm Booking</button>
+        </form>
+        <div class="mt-4">
+            <a href="/shows" class="hover:underline">&lt; Back to Shows</a>
+        </div>
+    </div>
+</body>
+</html>
