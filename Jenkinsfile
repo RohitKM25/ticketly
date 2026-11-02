@@ -35,14 +35,17 @@ pipeline {
         
         stage('Deploy to AKS') {
             steps {
-                script {
-                  def appVersion = sh(
+                withKubeConfig(credentialsId: 'aks-kubeconfig-credentials', serverUrl: '') {
+                    script {
+                        def appVersion = sh(
                             script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", 
                             returnStdout: true
                         ).trim()
 
-                  sh "sed -i 's|image:.*|image: rohitkm25/ticketly:${appVersion}|g' k8s/deployment.yaml"
-                  sh 'kubectl apply -f k8s/ --validate=false'
+                        sh "sed -i 's|image:.*|image: rohitkm25/ticketly:${appVersion}|g' k8s/deployment.yaml"
+                        
+                        sh 'kubectl apply -f k8s/ --validate=false'
+                    }
                 }
             }
         }
