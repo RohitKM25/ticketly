@@ -8,13 +8,7 @@ pipeline {
             }
         }
 
-        stage('Build') {
-            steps {
-                sh 'mvn clean package -DskipTests'
-            }
-        }
-
-        stage('Dockerize & Push') {
+        stage('Dockerize (Package, Run) & Push') {
             steps {
                 script {
                     def appVersion = sh(
