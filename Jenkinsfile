@@ -2,10 +2,16 @@ pipeline {
     agent any
 
     stages {
+        stage('Gitleaks Test') {
+            steps {
+                sh 'gitleaks detect --source=. --verbose --exit-code=1'
+            }
+        }
+
         stage('Test') {
             steps {
                 script {
-                    sh 'docker-compose up -d'
+                    sh 'docker-compose up -d postgres redis'
                     
                     try {
                         sh 'mvn clean test'
