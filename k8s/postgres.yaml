@@ -26,13 +26,6 @@ spec:
           value: postgres
         - name: POSTGRES_PASSWORD
           value: password
-        resources:
-          limits:
-            cpu: "500m"
-            memory: "512Mi"
-          requests:
-            cpu: "100m"
-            memory: "256Mi"
         livenessProbe:
           exec:
             command: ["pg_isready", "-U", "postgres", "-d", "ticketly"]
