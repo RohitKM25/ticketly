@@ -18,7 +18,8 @@
       ansible.builtin.command:
         cmd: kubectl apply -f {{ k8s_dir }}/postgres.yaml -f {{ k8s_dir }}/redis.yaml
       register: data_manifests
-      changed_when: 'created' in data_manifests.stdout or 'configured' in data_manifests.stdout
+      changed_when: >-
+        'created' in data_manifests.stdout or 'configured' in data_manifests.stdout
 
     - name: Wait for PostgreSQL and Redis to roll out
       ansible.builtin.command:
@@ -51,7 +52,8 @@
           ansible.builtin.command:
             cmd: kubectl apply -f {{ manifest_dir.path }}/deployment.yaml
           register: app_manifest
-          changed_when: 'created' in app_manifest.stdout or 'configured' in app_manifest.stdout
+          changed_when: >-
+            'created' in app_manifest.stdout or 'configured' in app_manifest.stdout
 
         - name: Wait for the application to roll out
           ansible.builtin.command:
