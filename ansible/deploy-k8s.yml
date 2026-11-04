@@ -1,0 +1,74 @@
+---
+- name: Deploy Ticketly to Kubernetes
+  hosts: local
+  gather_facts: false
+
+  tasks:
+    - name: Ensure kubectl is available
+      ansible.builtin.command:
+        cmd: kubectl version --client
+      changed_when: false
+
+    - name: Verify access to the Kubernetes cluster
+      ansible.builtin.command:
+        cmd: kubectl cluster-info
+      changed_when: false
+
+    - name: Apply PostgreSQL and Redis manifests
+      ansible.builtin.command:
+        cmd: kubectl apply -f {{ k8s_dir }}/postgres.yaml -f {{ k8s_dir }}/redis.yaml
+      register: data_manifests
+      changed_when: 'created' in data_manifests.stdout or 'configured' in data_manifests.stdout
+
+    - name: Wait for PostgreSQL and Redis to roll out
+      ansible.builtin.command:
+        cmd: kubectl rollout status deployment/{{ item }} --timeout={{ rollout_timeout }}
+      loop:
+        - postgres
+        - redis
+      changed_when: false
+
+    - name: Create a temporary directory for the rendered manifest
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: ticketly-
+      register: manifest_dir
+
+    - name: Deploy the application
+      block:
+        - name: Copy the deployment manifest
+          ansible.builtin.copy:
+            src: "{{ k8s_dir }}/deployment.yaml"
+            dest: "{{ manifest_dir.path }}/deployment.yaml"
+
+        - name: Pin the image tag in the local manifest copy
+          ansible.builtin.replace:
+            path: "{{ manifest_dir.path }}/deployment.yaml"
+            regexp: 'image:\s*{{ app_image_repo | regex_escape }}:.*'
+            replace: "image: {{ app_image_repo }}:{{ app_version }}"
+
+        - name: Apply the application deployment and service
+          ansible.builtin.command:
+            cmd: kubectl apply -f {{ manifest_dir.path }}/deployment.yaml
+          register: app_manifest
+          changed_when: 'created' in app_manifest.stdout or 'configured' in app_manifest.stdout
+
+        - name: Wait for the application to roll out
+          ansible.builtin.command:
+            cmd: kubectl rollout status deployment/ticketly-app --timeout={{ rollout_timeout }}
+          changed_when: false
+
+        - name: Read the application service
+          ansible.builtin.command:
+            cmd: kubectl get service ticketly-app-service -o wide
+          register: app_service
+          changed_when: false
+
+        - name: Show the service endpoint
+          ansible.builtin.debug:
+            msg: "{{ app_service.stdout_lines }}"
+      always:
+        - name: Remove the temporary manifest directory
+          ansible.builtin.file:
+            path: "{{ manifest_dir.path }}"
+            state: absent

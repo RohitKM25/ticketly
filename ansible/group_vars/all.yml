@@ -1,0 +1,7 @@
+project_dir: "{{ playbook_dir | dirname }}"
+k8s_dir: "{{ project_dir }}/k8s"
+
+app_image_repo: rohitkm25/ticketly
+app_version: latest
+
+rollout_timeout: 180s

@@ -50,9 +50,7 @@ pipeline {
                             returnStdout: true
                         ).trim()
 
-                        sh "sed -i 's|image:.*|image: rohitkm25/ticketly:${appVersion}|g' k8s/deployment.yaml"
-                        
-                        sh 'kubectl apply -f k8s/ --validate=false'
+                        sh "cd ansible && ansible-playbook deploy-k8s.yml -e app_version=${appVersion}"
                     }
                 }
             }
