@@ -2,13 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                git url: 'https://github.com/RohitKM25/ticketly', branch: 'main'
-            }
-        }
-
-        steps('Test') {
+        stage('Test') {
             steps {
                 sh 'mvn clean test'
             }
