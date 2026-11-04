@@ -12,7 +12,7 @@ services:
     networks:
       - ticketly-net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d ticketly_db"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ticketly"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -23,21 +23,6 @@ services:
       - '6379:6379'
     volumes:
       - redis_data:/data
-    networks:
-      - ticketly-net
-
-  app:
-    build: .
-    container_name: ticketly-app
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ticketly
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_started
     networks:
       - ticketly-net
 

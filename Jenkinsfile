@@ -4,7 +4,15 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                sh 'mvn clean test'
+                script {
+                    sh 'docker-compose up -d'
+                    
+                    try {
+                        sh 'mvn clean test'
+                    } finally {
+                        sh 'docker-compose down'
+                    }
+                }
             }
         }
 
